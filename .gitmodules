@@ -1,0 +1,9 @@
+[submodule "src/ZLMediaKit"]
+	path = src/ZLMediaKit
+	url = git@github.com:ZLMediaKit/ZLMediaKit.git
+[submodule "src/wvp-GB28181-pro"]
+	path = src/wvp-GB28181-pro
+	url = git@github.com:648540858/wvp-GB28181-pro.git
+[submodule "src/wvp-pro-assist"]
+	path = src/wvp-pro-assist
+	url = git@github.com:648540858/wvp-pro-assist.git
