@@ -1,0 +1,5 @@
+
+docker/logs/*
+docker/mysql/data/*
+docker/redis/data/*
+docker/video/*

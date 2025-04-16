@@ -1,0 +1,71 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    restart: always
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis_default.conf
+      - ./redis/data/:/data
+    environment:
+      TZ: "Asia/Shanghai"
+    command: redis-server /etc/redis/redis_default.conf --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  mysql:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      TZ: "Asia/Shanghai"
+      MYSQL_ROOT_PASSWORD: root123
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  wvp:
+    image: wvp_run
+    restart: always
+    ports:
+      - "5060:5060"
+      - "5060:5060/udp"
+      - "18080:18080"
+      - "80:80"
+      - "10000:10000/tcp"
+      - "10000:10000/udp"
+      - "30000-30064:30000-30064/tcp"
+      - "30000-30064:30000-30064/udp"
+    volumes:
+      - ./video:/opt/media/www/record/
+      - ./logs/wvp:/opt/wvp/logs/
+      - ./logs/assist:/opt/assist/logs/
+      - ./logs/media:/opt/media/log/
+      - ./application-docker.yml:/opt/wvp/config/application.yml
+    environment:
+      TZ: "Asia/Shanghai"
+      # [必须修改] 本机的IP
+      WVP_HOST: 0.0.0.0
+      WVP_PWD: aseqw_+hiy123
+      WVP_DOMAIN: 6101130049
+      WVP_ID: 61011300490000000001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 6
+      REDIS_PWD: root
+      ASSIST_JVM_CONFIG: -Xms128m -Xmx256m
+      WVP_JVM_CONFIG: -Xms128m -Xmx256m
+      MYSQL_HOST: mysql
+      ASSIST_CONFIG:
+      WVP_CONFIG:
+    depends_on:
+      redis:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
