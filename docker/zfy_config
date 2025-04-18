@@ -1,0 +1,12 @@
+sip_server_id: 33030000002000000001
+sip_domain: 3303000000
+sip_server_addr: 221.12.76.40
+sip_server_port: 55060
+account: 34020000001110000023
+password: 000000
+device_id: 34020000001110000023
+device_name: dev1
+video_channel: 34020000001320000023
+alarm_channel: 34020000001340000071
+audio_channel: 34020000001370000001
+

@@ -6,6 +6,8 @@ services:
     volumes:
       - ./redis/redis.conf:/etc/redis/redis_default.conf
       - ./redis/data/:/data
+    ports:
+      - 6379:6379
     environment:
       TZ: "Asia/Shanghai"
     command: redis-server /etc/redis/redis_default.conf --appendonly yes
@@ -30,40 +32,51 @@ services:
       interval: 5s
       timeout: 3s
       retries: 30
-  wvp:
-    image: wvp_run
+  zlm:
+    image: zlm_run:latest
     restart: always
     ports:
-      - "5060:5060"
-      - "5060:5060/udp"
-      - "18080:18080"
       - "80:80"
       - "10000:10000/tcp"
       - "10000:10000/udp"
       - "30000-30064:30000-30064/tcp"
       - "30000-30064:30000-30064/udp"
     volumes:
+       - ./logs/media:/opt/media/bin/log/
+       - ./zlm/config.ini:/opt/media/conf/config.ini
+  wvp:
+    image: wvp_run:latest
+    restart: always
+    ports:
+      - "5060:5060"
+      - "5060:5060/udp"
+      - "18080:18080"
+
+    volumes:
       - ./video:/opt/media/www/record/
       - ./logs/wvp:/opt/wvp/logs/
       - ./logs/assist:/opt/assist/logs/
-      - ./logs/media:/opt/media/log/
-      - ./application-docker.yml:/opt/wvp/config/application.yml
+      - ./wvp-GB28181-pro/application-docker.yml:/opt/wvp/config/application.yml
     environment:
       TZ: "Asia/Shanghai"
       # [必须修改] 本机的IP
       WVP_HOST: 0.0.0.0
-      WVP_PWD: aseqw_+hiy123
-      WVP_DOMAIN: 6101130049
-      WVP_ID: 61011300490000000001
-      REDIS_HOST: redis
+      WVP_PWD: 12345678
+      WVP_DOMAIN: 3303000000
+      WVP_ID: 33030000002000000003
+      ZLM_ID: zlm_server
+      ZLM_SECRET: yABaacAZtpCizHOWHFXFKA9798oO4h0r
+      REDIS_HOST: 192.168.3.222
       REDIS_PORT: 6379
       REDIS_DB: 6
       REDIS_PWD: root
       ASSIST_JVM_CONFIG: -Xms128m -Xmx256m
       WVP_JVM_CONFIG: -Xms128m -Xmx256m
       MYSQL_HOST: mysql
+      ZLM_HOST: 192.168.3.222
       ASSIST_CONFIG:
       WVP_CONFIG:
+      WVP_HOST_HOOK: 192.168.3.222
     depends_on:
       redis:
         condition: service_healthy
